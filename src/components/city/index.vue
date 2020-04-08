@@ -1,26 +1,31 @@
 <template>
   <div class="city_body">
     <div class="city_list">
-        <div class="city_hot">
-          <h2>热门城市</h2>
-          <ul class="clearfix">
-            <li v-for="item in hotCities" :key="item.id">
-              {{ item.nm }}
-            </li>
-          </ul>
-        </div>
-        <div class="city_sort" ref="city_sort">
-          <div v-for="item in cityList" :key="item.index">
-            <h2>{{ item.index }}</h2>
-            <ul>
-              <li v-for="itemList in item.list" :key="itemList.id">{{ itemList.nm }}</li>
-            </ul>
+        <loading v-if="isLoading"></loading>
+        <scroller v-else ref="city_List">
+          <div>
+            <div class="city_hot">
+              <h2>热门城市</h2>
+              <ul class="clearfix">
+                <li v-for="item in hotCities" :key="item.id" @tap="handleToCity(item.nm , item.id)">
+                  {{ item.nm }}
+                </li>
+              </ul>
+            </div>
+            <div class="city_sort" ref="city_sort">
+              <div v-for="item in cityList" :key="item.index">
+                <h2>{{ item.index }}</h2>
+                <ul>
+                  <li v-for="itemList in item.list" :key="itemList.id" @tap="handleToCity(itemList.nm , itemList.id)">{{ itemList.nm }}</li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
+        </scroller>
     </div>
     <div class="city_index">
       <ul>
-        <li v-for="(item,index) in cityList" :key="item.index" @click="handleToIndex(index)">
+        <li v-for="(item,index) in cityList" :key="item.index" @touchstart="handleToIndex(index)">
           {{ item.index }}
         </li>
       </ul>
@@ -34,20 +39,33 @@ export default {
   data () {
     return {
       hotCities: [],
-      cityList: []
+      cityList: [],
+      isLoading: true
     }
   },
   mounted () {
-    this.axios.get('/api/cityList').then((res) => {
-      const msg = res.data.msg
-      if (msg === 'ok') {
-        // [ { index: 'A', list:[ { nm: '阿尔泰', id: 123 }, ... ] }, ... ]
-        const cities = res.data.data.cities
-        const { hotCities, cityList } = this.formatCityList(cities)
-        this.hotCities = hotCities
-        this.cityList = cityList
-      }
-    })
+    const hotCities = window.localStorage.getItem('hotCities')
+    const cityList = window.localStorage.getItem('cityList')
+    if (hotCities && cityList) {
+      this.hotCities = JSON.parse(hotCities)
+      this.cityList = JSON.parse(cityList)
+      this.isLoading = false
+    } else {
+      this.axios.get('/api/cityList').then((res) => {
+        const msg = res.data.msg
+        if (msg === 'ok') {
+          // [ { index: 'A', list:[ { nm: '阿尔泰', id: 123 }, ... ] }, ... ]
+          const cities = res.data.data.cities
+          this.isLoading = false
+          const { hotCities, cityList } = this.formatCityList(cities)
+          this.hotCities = hotCities
+          this.cityList = cityList
+          // 存数据到本地
+          window.localStorage.setItem('hotCities', JSON.stringify(hotCities))
+          window.localStorage.setItem('cityList', JSON.stringify(cityList))
+        }
+      })
+    }
   },
   methods: {
     formatCityList (cities) {
@@ -99,7 +117,16 @@ export default {
     },
     handleToIndex (index) {
       const h2 = this.$refs.city_sort.getElementsByTagName('h2')
-      this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop
+      // this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop
+      this.$refs.city_List.toScrollTop(-h2[index].offsetTop)
+    },
+    handleToCity (nm, id) {
+      // 同时写状态和localStorage
+      this.$store.commit('city/CITY_INFO', { nm, id })
+      window.localStorage.setItem('nowNm', nm)
+      window.localStorage.setItem('nowId', id)
+      // 跳转到正在热映
+      this.$router.push('/movie/nowPlaying')
     }
   }
 }

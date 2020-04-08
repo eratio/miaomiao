@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="main">
     <TopNav title="我的喵喵"></TopNav>
     <div id="content">
       <login></login>

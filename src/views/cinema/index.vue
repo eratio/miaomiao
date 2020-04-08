@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="main">
     <TopNav title="喵喵院线"></TopNav>
     <div id="content">
       <cinema-list></cinema-list>
@@ -23,5 +23,5 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 </style>
