@@ -1,24 +1,27 @@
 <template>
   <div class="cinema_body">
-    <ul>
-      <li v-for="item in cinemaList" :key="item.id">
-        <div>
-          <span>{{ item.nm }}</span>
-          <span class="q" v-if="item.sellPrice">
-            <span class="price">{{ item.sellPrice }}</span>元起
-          </span>
-        </div>
-        <div class="address">
-          <span>{{ item.addr }}</span>
-          <span>{{ item.distance }}</span>
-        </div>
-        <div class="card">
-          <template v-for="(num,key) in item.tag">
-            <div v-if="num===1" :key="key" :class="key | classCard">{{ key | formatCard }}</div>
-          </template>
-        </div>
-      </li>
-    </ul>
+    <loading v-if="isLoading" />
+    <scroller v-else>
+      <ul>
+        <li v-for="item in cinemaList" :key="item.id">
+          <div>
+            <span>{{ item.nm }}</span>
+            <span class="q" v-if="item.sellPrice">
+              <span class="price">{{ item.sellPrice }}</span>元起
+            </span>
+          </div>
+          <div class="address">
+            <span>{{ item.addr }}</span>
+            <span>{{ item.distance }}</span>
+          </div>
+          <div class="card">
+            <template v-for="(num,key) in item.tag">
+              <div v-if="num===1" :key="key" :class="key | classCard">{{ key | formatCard }}</div>
+            </template>
+          </div>
+        </li>
+      </ul>
+    </scroller>
   </div>
 </template>
 
@@ -27,14 +30,23 @@ export default {
   name: 'cinema-list',
   data () {
     return {
-      cinemaList: []
+      cinemaList: [],
+      isLoading: true,
+      prevCityId: -1
     }
   },
-  mounted () {
-    this.axios.get('/api/cinemaList?cityId=10').then((res) => {
+  activated () {
+    const cityId = this.$store.state.city.id
+    if (this.prevCityId === cityId) {
+      return
+    }
+    this.isLoading = true
+    this.axios.get('/api/cinemaList?cityId=' + cityId).then((res) => {
       const msg = res.data.msg
       if (msg === 'ok') {
         this.cinemaList = res.data.data.cinemas
+        this.isLoading = false
+        this.prevCityId = cityId
       }
     })
   },
@@ -77,13 +89,11 @@ export default {
     overflow:auto;
     ul{
       padding:20px;
+      li {
+        border-bottom: 1px solid #e6e6e6;
+        margin-bottom: 20px;
+      }
     }
-
-    li {
-      border-bottom: 1px solid #e6e6e6;
-      margin-bottom: 20px;
-    }
-
     div {
       margin-bottom: 10px;
     }
