@@ -1,25 +1,29 @@
 <template>
   <div class="search_body">
-    <div class="search_input">
-      <div class="search_input_wrapper">
-        <i class="iconfont icon-sousuo"></i>
-        <input type="text" v-model="message">
-      </div>
-    </div>
-    <div class="search_result">
-      <h3>电影/电视剧/综艺</h3>
-      <ul>
-        <li v-for="item in movieList" :key="item.id">
-          <div class="img"><img :src=" item.img | setWH('128.180') "></div>
-          <div class="info">
-            <p><span>{{ item.nm }}</span><span>{{ item.sc }}</span></p>
-            <p>{{ item.enm }}</p>
-            <p>{{ item.cat }}</p>
-            <p>{{ item.rt }}</p>
+    <scroller>
+      <div>
+        <div class="search_input">
+          <div class="search_input_wrapper">
+            <i class="iconfont icon-sousuo"></i>
+            <input type="text" v-model="message">
           </div>
-        </li>
-      </ul>
-    </div>
+        </div>
+        <div class="search_result">
+          <h3>电影/电视剧/综艺</h3>
+          <ul>
+            <li v-for="item in movieList" :key="item.id">
+              <div class="img" @tap="handleToDetail(item.id)"><img :src=" item.img | setWH('128.180')"></div>
+              <div class="info">
+                <p><span>{{ item.nm }}</span><span>{{ item.sc }}</span></p>
+                <p>{{ item.enm }}</p>
+                <p>{{ item.cat }}</p>
+                <p>{{ item.rt }}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </scroller>
   </div>
 </template>
 
@@ -37,6 +41,9 @@ export default {
       if (typeof this.source === 'function') {
         this.source('终止请求')
       }
+    },
+    handleToDetail (movieId) {
+      this.$router.push('/movie/detail/3/' + movieId)
     }
   },
   watch: {

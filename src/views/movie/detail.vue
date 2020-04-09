@@ -44,6 +44,7 @@
 import TopNav from '@/components/topnav'
 import Swiper from 'swiper'
 import 'swiper/css/swiper.css'
+// import { msgBox } from '@/components/js'
 
 export default {
   name: 'detail',
@@ -79,7 +80,20 @@ export default {
       }
     })
   }
+  // activated () {
+  //   const that = this
+  //   msgBox({
+  //     title: 'Sorry!',
+  //     content: '没有找到影片详情',
+  //     cancel: '',
+  //     ok: '确定',
+  //     handleOk () {
+  //       that.handleBack()
+  //     }
+  //   })
+  // }
 }
+
 </script>
 
 <style scoped>
