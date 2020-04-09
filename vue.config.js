@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: process.env.NODE_ENV === 'production' ? '/miaomiao/' : '/',
   devServer: {
     // 代理规则
     proxy: {
