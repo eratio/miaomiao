@@ -2,7 +2,7 @@
   <div id="main">
     <TopNav title="我的喵喵"></TopNav>
     <div id="content">
-      <login></login>
+       <router-view></router-view>
     </div>
     <TabBar></TabBar>
   </div>
@@ -11,14 +11,12 @@
 <script>
 import TopNav from '@/components/topnav'
 import TabBar from '@/components/tabbar'
-import Login from '@/components/login'
 
 export default {
   name: 'mine',
   components: {
     TopNav,
-    TabBar,
-    Login
+    TabBar
   }
 }
 </script>

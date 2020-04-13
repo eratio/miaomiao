@@ -5,6 +5,8 @@ import store from './store'
 import axios from 'axios'
 import scroller from '@/components/scroller'
 import loading from '@/components/loading'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.prototype.axios = axios
 
@@ -13,6 +15,9 @@ Vue.component('scroller', scroller)
 
 // 全司注册loading
 Vue.component('loading', loading)
+
+// 全司引入element-ui
+Vue.use(ElementUI)
 
 // 全局过滤器（变换URL)
 Vue.filter('setWH', (url, arg) => {
